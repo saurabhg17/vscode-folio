@@ -1,16 +1,62 @@
 /*
- * Typography layer for the built-in Markdown preview.
+ * Folio's look for the built-in Markdown preview.
  *
- * This sits on top of bierner.markdown-preview-github-styles, which supplies the
- * colours, code-block chrome and table borders. Only the type is restyled here.
- * The knobs worth touching are right below.
+ * Colours come from bierner.markdown-preview-github-styles underneath. This sheet sets the type
+ * and replaces GitHub's chrome with quieter, book-like conventions: a bundled serif text face so
+ * every platform renders the same, code marked by its font alone (no tinted chips or boxes), and
+ * booktabs-style tables. The knobs worth touching are right below.
  */
 
 :root {
-    --md-measure: 76rem;  /* max line length of the text column */
-    --md-pad-x: 1.5rem;   /* gutter between the text and the window edge */
-    --md-size: 16.5px;    /* body text size */
+    --md-measure: 36em;    /* max line length of the text column, about 75 characters */
+    --md-size: 17px;       /* body text size */
+    --md-leading: 1.55;    /* body line height */
+    --md-ink: #1f2328;     /* text colour, also the colour of table rules */
+    --md-rule-light: rgba(31, 35, 40, 0.3);  /* hairlines: code blocks, horizontal rules */
 }
+
+/* ---------------------------------------------------------------------------
+ * Fonts. Source Serif 4 (SIL Open Font License, see fonts/OFL.txt) with weight and optical-size
+ * axes, latin and latin-ext subsets. A private family name keeps a locally installed copy with
+ * different features from being picked instead.
+ * ------------------------------------------------------------------------- */
+
+@font-face {
+    font-family: "Folio Serif";
+    font-style: normal;
+    font-weight: 200 900;
+    font-display: swap;
+    src: url("fonts/source-serif-4-latin-opsz-normal.woff2") format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: "Folio Serif";
+    font-style: normal;
+    font-weight: 200 900;
+    font-display: swap;
+    src: url("fonts/source-serif-4-latin-ext-opsz-normal.woff2") format("woff2");
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+    font-family: "Folio Serif";
+    font-style: italic;
+    font-weight: 200 900;
+    font-display: swap;
+    src: url("fonts/source-serif-4-latin-opsz-italic.woff2") format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: "Folio Serif";
+    font-style: italic;
+    font-weight: 200 900;
+    font-display: swap;
+    src: url("fonts/source-serif-4-latin-ext-opsz-italic.woff2") format("woff2");
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* ---------------------------------------------------------------------------
+ * Page and text column
+ * ------------------------------------------------------------------------- */
 
 /* White always, including the strip below a short document, which would
    otherwise fall through to the editor's own background. */
@@ -21,59 +67,138 @@ body {
 
 body .github-markdown-body,
 body .markdown-body {
-    /* Segoe UI Variable carries an opsz 5..36 axis, so headings pick up the
-       Display optical size and body text the Text size, automatically. */
-    font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+    /* The optical-size axis gives headings the display cut and body text the text cut. */
+    font-family: "Folio Serif", Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
     font-optical-sizing: auto;
+    font-kerning: normal;
+    font-variant-ligatures: common-ligatures contextual;
     font-size: var(--md-size);
-    line-height: 1.7;
+    line-height: var(--md-leading);
+    color: var(--md-ink);
     text-wrap: pretty;
 }
 
+/* The gutter around the column is GitHub styles' own `padding: 32px !important`. */
 body .github-markdown-content {
     max-width: var(--md-measure);
-    padding: 2.5rem var(--md-pad-x) 6rem;
 }
 
-/* Headings: tighter leading, and far more space above than below, so each one
-   binds to the text it introduces rather than floating between blocks. */
+/* ---------------------------------------------------------------------------
+ * Headings: roughly LaTeX's scale (title, \section, \subsection, ...), bold serif, no rules
+ * under them. Far more space above than below, so each binds to the text it introduces.
+ * ------------------------------------------------------------------------- */
+
 body .github-markdown-body :is(h1, h2, h3, h4, h5, h6) {
     font-weight: 600;
     line-height: 1.25;
-    letter-spacing: -0.011em;
+    letter-spacing: normal;
     margin-top: 2.2em;
     margin-bottom: 0.7em;
+    padding-bottom: 0;
+    border-bottom: 0;
 }
 
-body .github-markdown-body h1 { font-size: 2.1em;  letter-spacing: -0.021em; }
-body .github-markdown-body h2 { font-size: 1.55em; letter-spacing: -0.016em; }
-body .github-markdown-body h3 { font-size: 1.22em; }
+body .github-markdown-body h1 { font-size: 1.9em; }
+body .github-markdown-body h2 { font-size: 1.44em; }
+body .github-markdown-body h3 { font-size: 1.2em; }
+body .github-markdown-body h4 { font-size: 1em; }
+body .github-markdown-body :is(h5, h6) { font-size: 1em; font-weight: 600; font-style: italic; }
 body .github-markdown-body h1:first-child { margin-top: 0; }
 
-body .github-markdown-body p  { margin: 0 0 1.15em; }
-body .github-markdown-body li { margin-bottom: 0.35em; }
+/* ---------------------------------------------------------------------------
+ * Blocks
+ * ------------------------------------------------------------------------- */
+
+body .github-markdown-body p  { margin: 0 0 1.1em; }
+body .github-markdown-body li { margin-bottom: 0.3em; }
 body .github-markdown-body li > p { margin-bottom: 0.5em; }
 body .github-markdown-body ul,
 body .github-markdown-body ol { padding-left: 1.6em; }
 
+/* Like LaTeX's quote environment: indented on both sides, same ink, no bar. */
 body .github-markdown-body blockquote {
-    border-left-width: 3px;
-    padding-left: 1.1em;
+    margin: 0 2em 1.1em;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    color: inherit;
 }
 
-/* Code keeps the face you already read code in, ligatures included. */
-body .github-markdown-body :is(code, kbd, pre, samp) {
-    font-family: "Cascadia Code", Consolas, ui-monospace, monospace;
+/* A thin rule rather than GitHub's grey slab. */
+body .github-markdown-body hr {
+    box-sizing: content-box;
+    height: 0;
+    margin: 2.5em 0;
+    border: 0;
+    border-top: 1px solid var(--md-rule-light);
+    background: none;
+}
+
+/* ---------------------------------------------------------------------------
+ * Code: the editor's own font on every platform, marked by the face alone.
+ * ------------------------------------------------------------------------- */
+
+body .github-markdown-body :is(code, kbd, pre, samp, tt) {
+    font-family: var(--vscode-editor-font-family, ui-monospace, "SF Mono", Menlo, "Cascadia Mono", Consolas, "DejaVu Sans Mono", "Liberation Mono", monospace);
     font-variant-ligatures: contextual;
 }
 
-body .github-markdown-body pre { font-size: 0.86em; line-height: 1.55; }
-body .github-markdown-body :not(pre) > code { font-size: 0.88em; }
+/* Inline code and keys: no tinted chip, no box, just the monospace face. */
+body .github-markdown-body :not(pre) > :is(code, tt),
+body .github-markdown-body kbd {
+    font-size: 0.88em;
+    line-height: inherit;
+    vertical-align: baseline;
+    padding: 0;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    color: inherit;
+}
 
-/* Metric tables read column-wise, so digits get fixed advance widths. */
+/* Code blocks: a hairline above and below (listings' frame=lines), no fill, no box. */
+body .github-markdown-body pre {
+    font-size: 0.86em;
+    line-height: 1.55;
+    margin: 0 0 1.1em;
+    padding: 0.7em 0;
+    background: none;
+    border: 0;
+    border-top: 1px solid var(--md-rule-light);
+    border-bottom: 1px solid var(--md-rule-light);
+    border-radius: 0;
+}
+body .github-markdown-body pre.hljs code > div { padding: 0; }
+
+/* ---------------------------------------------------------------------------
+ * Tables: booktabs. A heavy rule on top and bottom, a light one under the header, no vertical
+ * rules, no row stripes. The outer columns sit flush with the rules, like @{} in LaTeX.
+ * ------------------------------------------------------------------------- */
+
 body .github-markdown-body table {
     font-size: 0.9em;
     font-variant-numeric: tabular-nums;
+    margin: 1.4em 0;
+    border-collapse: collapse;
+    border-top: 2px solid var(--md-ink);
+    border-bottom: 2px solid var(--md-ink);
+}
+body .github-markdown-body table tr:nth-child(n) {
+    background: none;
+    border: 0;
+}
+body .github-markdown-body table :is(th, td) {
+    padding: 0.4em 0.9em;
+    border: 0;
+    vertical-align: top;
+}
+body .github-markdown-body table :is(th, td):first-child { padding-left: 0; }
+body .github-markdown-body table :is(th, td):last-child  { padding-right: 0; }
+body .github-markdown-body table thead th {
+    font-weight: 600;
+    border-bottom: 1px solid var(--md-ink);
 }
 
 /* ---------------------------------------------------------------------------
