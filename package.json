@@ -30,6 +30,9 @@
 	],
 	"contributes": {
 		"markdown.markdownItPlugins": true,
+		"configurationDefaults": {
+			"markdown.preview.typographer": true
+		},
 		"markdown.previewStyles": [
 			"./media/folio.css"
 		],

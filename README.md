@@ -28,6 +28,7 @@ Each link carries a random key that Folio generates when it starts, so a `vscode
 | `folio.tasks.saveAfterToggle` | `true` | Save after a toggle. A file that already had unsaved changes is never saved automatically. |
 | `folio.mermaid.enabled` | `true` | Render Mermaid blocks. |
 | `folio.mermaid.theme` | `default` | Mermaid theme. A `%%{init: {'theme': 'forest'}}%%` line in a diagram overrides it. |
+| `markdown.preview.typographer` | `true` (VS Code's own default is `false`) | VS Code's setting, switched on by Folio: the preview shows “curly quotes”, `--` as –, `---` as —, `...` as … and `(c)` as ©. Code is left alone and the file itself is never changed. Set it to `false` to turn it off. |
 
 ## Extensions Folio replaces
 
