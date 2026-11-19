@@ -6,3 +6,4 @@ dist/**/*.map
 tsconfig.json
 esbuild.mjs
 **/*.ts
+examples/**
