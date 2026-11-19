@@ -1,0 +1,134 @@
+/*
+ * Typography layer for the built-in Markdown preview.
+ *
+ * This sits on top of bierner.markdown-preview-github-styles, which supplies the
+ * colours, code-block chrome and table borders. Only the type is restyled here.
+ * The knobs worth touching are right below.
+ */
+
+:root {
+    --md-measure: 76rem;  /* max line length of the text column */
+    --md-pad-x: 1.5rem;   /* gutter between the text and the window edge */
+    --md-size: 16.5px;    /* body text size */
+}
+
+/* White always, including the strip below a short document, which would
+   otherwise fall through to the editor's own background. */
+html,
+body {
+    background-color: #ffffff;
+}
+
+body .github-markdown-body,
+body .markdown-body {
+    /* Segoe UI Variable carries an opsz 5..36 axis, so headings pick up the
+       Display optical size and body text the Text size, automatically. */
+    font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+    font-optical-sizing: auto;
+    font-size: var(--md-size);
+    line-height: 1.7;
+    text-wrap: pretty;
+}
+
+body .github-markdown-content {
+    max-width: var(--md-measure);
+    padding: 2.5rem var(--md-pad-x) 6rem;
+}
+
+/* Headings: tighter leading, and far more space above than below, so each one
+   binds to the text it introduces rather than floating between blocks. */
+body .github-markdown-body :is(h1, h2, h3, h4, h5, h6) {
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.011em;
+    margin-top: 2.2em;
+    margin-bottom: 0.7em;
+}
+
+body .github-markdown-body h1 { font-size: 2.1em;  letter-spacing: -0.021em; }
+body .github-markdown-body h2 { font-size: 1.55em; letter-spacing: -0.016em; }
+body .github-markdown-body h3 { font-size: 1.22em; }
+body .github-markdown-body h1:first-child { margin-top: 0; }
+
+body .github-markdown-body p  { margin: 0 0 1.15em; }
+body .github-markdown-body li { margin-bottom: 0.35em; }
+body .github-markdown-body li > p { margin-bottom: 0.5em; }
+body .github-markdown-body ul,
+body .github-markdown-body ol { padding-left: 1.6em; }
+
+body .github-markdown-body blockquote {
+    border-left-width: 3px;
+    padding-left: 1.1em;
+}
+
+/* Code keeps the face you already read code in, ligatures included. */
+body .github-markdown-body :is(code, kbd, pre, samp) {
+    font-family: "Cascadia Code", Consolas, ui-monospace, monospace;
+    font-variant-ligatures: contextual;
+}
+
+body .github-markdown-body pre { font-size: 0.86em; line-height: 1.55; }
+body .github-markdown-body :not(pre) > code { font-size: 0.88em; }
+
+/* Metric tables read column-wise, so digits get fixed advance widths. */
+body .github-markdown-body table {
+    font-size: 0.9em;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------------------
+ * Task lists
+ * ------------------------------------------------------------------------- */
+
+/* Layout comes from the GitHub styles: the list keeps its indent and the box hangs into it
+   (margin-left: -1.4em), so task text lines up with ordinary list text. */
+body .task-list-item { list-style: none; }
+body .task-list-item-checkbox { accent-color: #1f6feb; }
+
+/* The link carries the click; the box inside is only drawn. */
+body a.folio-task {
+    display: inline-flex;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 3px;
+}
+body a.folio-task .task-list-item-checkbox {
+    pointer-events: none;
+    cursor: pointer;
+}
+body a.folio-task:focus-visible {
+    outline: 2px solid #1f6feb;
+    outline-offset: 1px;
+}
+
+/* ---------------------------------------------------------------------------
+ * Mermaid: the diagram at its natural size, centred, no frame around it.
+ * ------------------------------------------------------------------------- */
+
+body .folio-mermaid {
+    margin: 1.5em 0;
+    text-align: center;
+    overflow-x: auto;
+}
+body .folio-mermaid > svg {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Until the script draws it (or if it never does), show the source quietly. */
+body .folio-mermaid > pre.folio-mermaid-source {
+    text-align: left;
+    opacity: 0.55;
+}
+
+body .folio-mermaid-error {
+    text-align: left;
+    border-left: 3px solid #cf222e;
+    padding-left: 1em;
+}
+body .folio-mermaid-error-message {
+    color: #cf222e;
+    font-size: 0.9em;
+    margin-bottom: 0.5em;
+    white-space: pre-wrap;
+}
