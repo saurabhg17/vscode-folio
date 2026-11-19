@@ -18,6 +18,8 @@ The preview cannot talk to extensions directly, so each checkbox is a `vscode://
 
 If the file changed since the preview last refreshed, the click is ignored with a warning rather than flipping the wrong task.
 
+Each link carries a random key that Folio generates when it starts, so a `vscode://saurabh.folio/…` link from a web page or email cannot edit your files, even after you have told VS Code to stop asking. A preview drawn before VS Code's extension host restarted has stale keys; refresh it if a click is refused.
+
 ## Settings
 
 | Setting | Default | Effect |

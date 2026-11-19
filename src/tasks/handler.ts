@@ -1,7 +1,15 @@
+import { randomBytes } from 'node:crypto';
 import * as vscode from 'vscode';
 import { decodeDocRef, encodeDocRef, toggleTaskLine } from './toggle.ts';
 
 export const TOGGLE_PATH = '/toggle-task';
+
+/**
+ * A `vscode://` link reaches this handler from anywhere: a web page, an email, a terminal. Only
+ * links Folio rendered into a preview during this session carry this key, so a link crafted
+ * elsewhere cannot edit files even after the user has told VS Code to stop asking.
+ */
+const SESSION_KEY = randomBytes(18).toString('base64url');
 
 /**
  * The preview webview cannot message this extension directly. A real click on a `vscode://`
@@ -9,7 +17,7 @@ export const TOGGLE_PATH = '/toggle-task';
  * link's authority, which is how a checkbox click reaches `handleUri` below.
  */
 export function toggleHref(extensionId: string, document: vscode.Uri, line: number, checked: boolean): string {
-	const query = `d=${encodeDocRef(document.toString())}&line=${line}&checked=${checked ? 1 : 0}`;
+	const query = `d=${encodeDocRef(document.toString())}&line=${line}&checked=${checked ? 1 : 0}&k=${SESSION_KEY}`;
 	return `${vscode.env.uriScheme}://${extensionId}${TOGGLE_PATH}?${query}`;
 }
 
@@ -28,6 +36,11 @@ export class TaskToggleUriHandler implements vscode.UriHandler {
 
 async function toggleTask(uri: vscode.Uri): Promise<void> {
 	const params = new URLSearchParams(uri.query);
+	if (params.get('k') !== SESSION_KEY) {
+		// Also what a checkbox in a preview drawn before an extension-host restart sends.
+		void vscode.window.showWarningMessage('Folio ignored a task link it did not create in this session. If you clicked a checkbox, refresh the preview (or reopen it) and try again.');
+		return;
+	}
 	const ref = params.get('d');
 	const line = Number(params.get('line'));
 	if (!ref || !Number.isInteger(line) || line < 0) {
