@@ -54,7 +54,7 @@
 				},
 				"folio.lineLength": {
 					"type": "integer",
-					"default": 100,
+					"default": 85,
 					"minimum": 0,
 					"maximum": 300,
 					"markdownDescription": "Approximate number of characters per line in the preview's text column. `0` lets the text fill the preview."

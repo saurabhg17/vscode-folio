@@ -24,7 +24,7 @@ Each link carries a random key that Folio generates when it starts, so a `vscode
 
 | Setting | Default | Effect |
 | --- | --- | --- |
-| `folio.lineLength` | `100` | Approximate characters per line in the text column. `0` lets the text fill the preview. |
+| `folio.lineLength` | `85` | Approximate characters per line in the text column. `0` lets the text fill the preview. |
 | `folio.tasks.clickable` | `true` | Make checkboxes clickable. When off they render read-only. |
 | `folio.tasks.saveAfterToggle` | `true` | Save after a toggle. A file that already had unsaved changes is never saved automatically. |
 | `folio.mermaid.enabled` | `true` | Render Mermaid blocks. |

@@ -58,7 +58,7 @@ export function activate(context: vscode.ExtensionContext) {
 			});
 			lineLengthPlugin(md, {
 				// Only previews of a document; other callers of the engine get plain HTML.
-				lineLength: (env) => documentOf(env) ? config(env).get<number>('lineLength', 100) : undefined,
+				lineLength: (env) => documentOf(env) ? config(env).get<number>('lineLength', 85) : undefined,
 			});
 			return md;
 		},
