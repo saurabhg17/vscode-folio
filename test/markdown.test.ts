@@ -1,9 +1,14 @@
+import { createRequire } from 'node:module';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import markdownit, { type MarkdownIt } from 'markdown-it';
 import { taskListPlugin, type TaskMeta } from '../src/markdown/taskLists.ts';
 import { mermaidPlugin } from '../src/markdown/mermaid.ts';
 import { toggleTaskLine } from '../src/tasks/toggle.ts';
+
+/** Untyped CommonJS; the task-list plugin Markdown All in One bundles. */
+const githubTaskLists = createRequire(import.meta.url)('markdown-it-task-lists') as
+	(md: MarkdownIt, options: { enabled: boolean }) => void;
 
 function engine(clickable = true): MarkdownIt {
 	const md = markdownit();
@@ -69,3 +74,18 @@ test('repeated renders of cached tokens do not accumulate classes', () => {
 	assert.equal(first, second);
 	assert.match(first, /class="code-line folio-mermaid"/);
 });
+
+for (const enabled of [true, false]) {
+	test(`takes over checkboxes from markdown-it-task-lists registered after it (enabled: ${enabled})`, () => {
+		// VS Code applies Folio's plugin before Markdown All in One's, so that rule runs first.
+		const md = engine();
+		githubTaskLists(md, { enabled });
+		const html = md.render('- [ ] one\n- [x] two\n- [X] three\n- plain\n');
+		assert.doesNotMatch(html, /<input class="task-list-item-checkbox"/);
+		assert.match(html, /href="vscode:\/\/saurabh\.folio\/toggle-task\?line=0&amp;checked=0"[^>]*><input[^>]*><\/a> one<\/li>/);
+		assert.match(html, /href="vscode:\/\/saurabh\.folio\/toggle-task\?line=1&amp;checked=1"[^>]*><input[^>]*checked><\/a> two<\/li>/);
+		assert.match(html, /href="vscode:\/\/saurabh\.folio\/toggle-task\?line=2&amp;checked=1"[^>]*><input[^>]*checked><\/a> three<\/li>/);
+		assert.equal(html.match(/task-list-item[" ]/g)?.length, 3);
+		assert.match(html, /<li>plain<\/li>/);
+	});
+}

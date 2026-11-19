@@ -92,6 +92,7 @@
 		"@vscode/vsce": "4.1.1",
 		"esbuild": "0.28.2",
 		"markdown-it": "15.0.3",
+		"markdown-it-task-lists": "2.1.1",
 		"typescript": "7.0.2"
 	}
 }

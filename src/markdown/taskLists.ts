@@ -11,6 +11,13 @@ export const TASK_TOKEN = 'folio_task_checkbox';
 
 const MARKER = /^\[([ xX])\](?=[ \t]|$)/;
 
+/**
+ * The checkbox `markdown-it-task-lists` (bundled by Markdown All in One) leaves in place of the
+ * marker. markdown-it runs the rule registered last first, so when that plugin is set up after
+ * Folio it has already consumed the `[ ]` by the time Folio's rule sees the paragraph.
+ */
+const FOREIGN_CHECKBOX = /^<input class="task-list-item-checkbox"( checked="")?(?: disabled="" )?type="checkbox">$/;
+
 export interface TaskMeta {
 	checked: boolean;
 	/** Zero-based source line of the paragraph that starts with the marker. */
@@ -33,22 +40,35 @@ export function taskListPlugin(md: MarkdownIt, options: TaskListOptions): void {
 				continue;
 			}
 			const first = inline.children?.[0];
-			if (!first || first.type !== 'text') {
-				continue;
-			}
-			const match = MARKER.exec(first.content);
-			if (!match) {
+			let checked: boolean;
+			if (first?.type === 'text') {
+				const match = MARKER.exec(first.content);
+				if (!match) {
+					continue;
+				}
+				checked = match[1] !== ' ';
+				first.content = first.content.slice(3);
+			} else if (first?.type === 'html_inline') {
+				const match = FOREIGN_CHECKBOX.exec(first.content);
+				if (!match) {
+					continue;
+				}
+				// The other plugin has already removed the marker from the text that follows.
+				checked = match[1] !== undefined;
+				inline.children!.shift();
+			} else {
 				continue;
 			}
 
-			first.content = first.content.slice(3);
 			const checkbox = new state.Token(TASK_TOKEN, '', 0);
-			checkbox.meta = { checked: match[1] !== ' ', line: paragraph.map?.[0] } satisfies TaskMeta;
+			checkbox.meta = { checked, line: paragraph.map?.[0] } satisfies TaskMeta;
 			inline.children!.unshift(checkbox);
 
-			item.attrJoin('class', 'task-list-item');
+			if (!hasClass(item, 'task-list-item')) {
+				item.attrJoin('class', 'task-list-item');
+			}
 			const list = findParentList(tokens, i - 2);
-			if (list && !String(list.attrGet('class') ?? '').includes('contains-task-list')) {
+			if (list && !hasClass(list, 'contains-task-list')) {
 				list.attrJoin('class', 'contains-task-list');
 			}
 		}
@@ -66,6 +86,10 @@ export function taskListPlugin(md: MarkdownIt, options: TaskListOptions): void {
 			`role="checkbox" aria-checked="${meta.checked}">` +
 			`<input type="checkbox" class="task-list-item-checkbox" tabindex="-1" aria-hidden="true"${checked}></a>`;
 	};
+}
+
+function hasClass(token: Token, name: string): boolean {
+	return String(token.attrGet('class') ?? '').split(/\s+/).includes(name);
 }
 
 function findParentList(tokens: Token[], itemIndex: number): Token | undefined {

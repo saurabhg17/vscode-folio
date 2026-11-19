@@ -80,19 +80,25 @@ body .github-markdown-body table {
  * Task lists
  * ------------------------------------------------------------------------- */
 
-/* Layout comes from the GitHub styles: the list keeps its indent and the box hangs into it
-   (margin-left: -1.4em), so task text lines up with ordinary list text. */
+/* The list keeps its indent and the box hangs into it, so task text lines up with ordinary
+   list text. */
 body .task-list-item { list-style: none; }
 body .task-list-item-checkbox { accent-color: #1f6feb; }
 
-/* The link carries the click; the box inside is only drawn. */
+/* The link carries the click; the box inside is only drawn. The hang sits on the link, and the
+   box's own margin is reset, so the link always covers the box: a stylesheet that hangs the box
+   itself (Markdown All in One: margin-left: -20px) would otherwise shrink the link to nothing
+   and leave the box, which ignores the pointer, unclickable. */
 body a.folio-task {
     display: inline-flex;
+    margin: 0 0.2em 0.25em -1.4em;
+    vertical-align: middle;
     text-decoration: none;
     cursor: pointer;
     border-radius: 3px;
 }
 body a.folio-task .task-list-item-checkbox {
+    margin: 0;
     pointer-events: none;
     cursor: pointer;
 }
