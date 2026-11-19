@@ -1,0 +1,251 @@
+/*
+ * Folio's look for the built-in Markdown preview.
+ *
+ * Colours come from bierner.markdown-preview-github-styles underneath. This sheet sets the type
+ * and replaces GitHub's chrome with quieter, book-like conventions: a bundled serif text face so
+ * every platform renders the same, code marked by its font alone (no tinted chips or boxes), and
+ * booktabs-style tables. The knobs worth touching are right below.
+ */
+
+:root {
+    --md-measure: 42.5em;  /* text column width, about 85 characters; folio.lineLength overrides it */
+    --md-size: 17px;       /* body text size */
+    --md-leading: 1.55;    /* body line height */
+    --md-ink: #1f2328;     /* text colour, also the colour of table rules */
+    --md-rule-light: rgba(31, 35, 40, 0.3);  /* hairlines: code blocks, horizontal rules */
+}
+
+/* ---------------------------------------------------------------------------
+ * Fonts. Source Serif 4.005 from Adobe, unmodified (SIL Open Font License, see fonts/OFL.txt):
+ * weight and optical-size axes, and the full OpenType feature set, old-style figures included.
+ * A private family name keeps a locally installed copy, which may lack those, from being used.
+ * ------------------------------------------------------------------------- */
+
+@font-face {
+    font-family: "Folio Serif";
+    font-style: normal;
+    font-weight: 200 900;
+    font-display: swap;
+    src: url("fonts/SourceSerif4Variable-Roman.ttf.woff2") format("woff2");
+}
+@font-face {
+    font-family: "Folio Serif";
+    font-style: italic;
+    font-weight: 200 900;
+    font-display: swap;
+    src: url("fonts/SourceSerif4Variable-Italic.ttf.woff2") format("woff2");
+}
+
+/* ---------------------------------------------------------------------------
+ * Page and text column
+ * ------------------------------------------------------------------------- */
+
+/* White always, including the strip below a short document, which would
+   otherwise fall through to the editor's own background. */
+html,
+body {
+    background-color: #ffffff;
+}
+
+body .github-markdown-body,
+body .markdown-body {
+    /* The optical-size axis gives headings the display cut and body text the text cut. */
+    font-family: "Folio Serif", Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
+    font-optical-sizing: auto;
+    font-kerning: normal;
+    font-variant-ligatures: common-ligatures contextual;
+    /* Old-style figures sit in running text like lowercase; headings and tables switch back. */
+    font-variant-numeric: oldstyle-nums proportional-nums;
+    font-size: var(--md-size);
+    line-height: var(--md-leading);
+    color: var(--md-ink);
+    text-wrap: pretty;
+}
+
+/* The gutter around the column is GitHub styles' own `padding: 32px !important`. */
+body .github-markdown-content {
+    max-width: var(--md-measure);
+}
+
+/* ---------------------------------------------------------------------------
+ * Headings: roughly LaTeX's scale (title, \section, \subsection, ...), bold serif, no rules
+ * under them. Far more space above than below, so each binds to the text it introduces.
+ * ------------------------------------------------------------------------- */
+
+body .github-markdown-body :is(h1, h2, h3, h4, h5, h6) {
+    font-weight: 600;
+    font-variant-numeric: lining-nums;
+    line-height: 1.25;
+    letter-spacing: normal;
+    margin-top: 2.2em;
+    margin-bottom: 0.7em;
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+body .github-markdown-body h1 { font-size: 1.9em; }
+body .github-markdown-body h2 { font-size: 1.44em; }
+body .github-markdown-body h3 { font-size: 1.2em; }
+body .github-markdown-body h4 { font-size: 1em; }
+body .github-markdown-body :is(h5, h6) { font-size: 1em; font-weight: 600; font-style: italic; }
+body .github-markdown-body h1:first-child { margin-top: 0; }
+
+/* ---------------------------------------------------------------------------
+ * Blocks
+ * ------------------------------------------------------------------------- */
+
+body .github-markdown-body p  { margin: 0 0 1.1em; }
+body .github-markdown-body li { margin-bottom: 0.3em; }
+body .github-markdown-body li > p { margin-bottom: 0.5em; }
+body .github-markdown-body ul,
+body .github-markdown-body ol { padding-left: 1.6em; }
+
+/* Like LaTeX's quote environment: indented on both sides, same ink, no bar. */
+body .github-markdown-body blockquote {
+    margin: 0 2em 1.1em;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    color: inherit;
+}
+
+/* A thin rule rather than GitHub's grey slab. */
+body .github-markdown-body hr {
+    box-sizing: content-box;
+    height: 0;
+    margin: 2.5em 0;
+    border: 0;
+    border-top: 1px solid var(--md-rule-light);
+    background: none;
+}
+
+/* ---------------------------------------------------------------------------
+ * Code: the editor's own font on every platform, marked by the face alone.
+ * ------------------------------------------------------------------------- */
+
+body .github-markdown-body :is(code, kbd, pre, samp, tt) {
+    font-family: var(--vscode-editor-font-family, ui-monospace, "SF Mono", Menlo, "Cascadia Mono", Consolas, "DejaVu Sans Mono", "Liberation Mono", monospace);
+    font-variant-ligatures: contextual;
+}
+
+/* Inline code and keys: no tinted chip, no box, just the monospace face. */
+body .github-markdown-body :not(pre) > :is(code, tt),
+body .github-markdown-body kbd {
+    font-size: 0.88em;
+    line-height: inherit;
+    vertical-align: baseline;
+    padding: 0;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    color: inherit;
+}
+
+/* Code blocks: a hairline above and below (listings' frame=lines), no fill, no box. */
+body .github-markdown-body pre {
+    font-size: 0.86em;
+    line-height: 1.55;
+    margin: 0 0 1.1em;
+    padding: 0.7em 0;
+    background: none;
+    border: 0;
+    border-top: 1px solid var(--md-rule-light);
+    border-bottom: 1px solid var(--md-rule-light);
+    border-radius: 0;
+}
+body .github-markdown-body pre.hljs code > div { padding: 0; }
+
+/* ---------------------------------------------------------------------------
+ * Tables: booktabs. A heavy rule on top and bottom, a light one under the header, no vertical
+ * rules, no row stripes. The outer columns sit flush with the rules, like @{} in LaTeX.
+ * ------------------------------------------------------------------------- */
+
+body .github-markdown-body table {
+    font-size: 0.9em;
+    font-variant-numeric: lining-nums tabular-nums;
+    margin: 1.4em 0;
+    border-collapse: collapse;
+    border-top: 2px solid var(--md-ink);
+    border-bottom: 2px solid var(--md-ink);
+}
+body .github-markdown-body table tr:nth-child(n) {
+    background: none;
+    border: 0;
+}
+body .github-markdown-body table :is(th, td) {
+    padding: 0.4em 0.9em;
+    border: 0;
+    vertical-align: top;
+}
+body .github-markdown-body table :is(th, td):first-child { padding-left: 0; }
+body .github-markdown-body table :is(th, td):last-child  { padding-right: 0; }
+body .github-markdown-body table thead th {
+    text-align: start;  /* a column's own alignment (style="text-align: ...") still wins */
+    font-weight: 600;
+    border-bottom: 1px solid var(--md-ink);
+}
+
+/* ---------------------------------------------------------------------------
+ * Task lists
+ * ------------------------------------------------------------------------- */
+
+/* The list keeps its indent and the box hangs into it, so task text lines up with ordinary
+   list text. */
+body .task-list-item { list-style: none; }
+body .task-list-item-checkbox { accent-color: #1f6feb; }
+
+/* The link carries the click; the box inside is only drawn. The hang sits on the link, and the
+   box's own margin is reset, so the link always covers the box: a stylesheet that hangs the box
+   itself (Markdown All in One: margin-left: -20px) would otherwise shrink the link to nothing
+   and leave the box, which ignores the pointer, unclickable. */
+body a.folio-task {
+    display: inline-flex;
+    margin: 0 0.2em 0.25em -1.4em;
+    vertical-align: middle;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 3px;
+}
+body a.folio-task .task-list-item-checkbox {
+    margin: 0;
+    pointer-events: none;
+    cursor: pointer;
+}
+body a.folio-task:focus-visible {
+    outline: 2px solid #1f6feb;
+    outline-offset: 1px;
+}
+
+/* ---------------------------------------------------------------------------
+ * Mermaid: the diagram at its natural size, centred, no frame around it.
+ * ------------------------------------------------------------------------- */
+
+body .folio-mermaid {
+    margin: 1.5em 0;
+    text-align: center;
+    overflow-x: auto;
+}
+body .folio-mermaid > svg {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Until the script draws it (or if it never does), show the source quietly. */
+body .folio-mermaid > pre.folio-mermaid-source {
+    text-align: left;
+    opacity: 0.55;
+}
+
+body .folio-mermaid-error {
+    text-align: left;
+    border-left: 3px solid #cf222e;
+    padding-left: 1em;
+}
+body .folio-mermaid-error-message {
+    color: #cf222e;
+    font-size: 0.9em;
+    margin-bottom: 0.5em;
+    white-space: pre-wrap;
+}
