@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import type { MarkdownIt } from 'markdown-it';
+import { lineLengthPlugin } from './markdown/lineLength.ts';
 import { mermaidPlugin } from './markdown/mermaid.ts';
 import { taskListPlugin } from './markdown/taskLists.ts';
 import { TaskToggleUriHandler, toggleHref } from './tasks/handler.ts';
@@ -32,6 +33,12 @@ function config(env: unknown): vscode.WorkspaceConfiguration {
 export function activate(context: vscode.ExtensionContext) {
 	const extensionId = context.extension.id;
 	context.subscriptions.push(vscode.window.registerUriHandler(new TaskToggleUriHandler()));
+	// The preview only redraws by itself for VS Code's own markdown.* settings.
+	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration((e) => {
+		if (e.affectsConfiguration('folio')) {
+			void vscode.commands.executeCommand('markdown.preview.refresh');
+		}
+	}));
 	warnAboutConflicts(context);
 
 	return {
@@ -48,6 +55,10 @@ export function activate(context: vscode.ExtensionContext) {
 			mermaidPlugin(md, {
 				enabled: (env) => config(env).get<boolean>('mermaid.enabled', true),
 				theme: (env) => config(env).get<string>('mermaid.theme', 'default'),
+			});
+			lineLengthPlugin(md, {
+				// Only previews of a document; other callers of the engine get plain HTML.
+				lineLength: (env) => documentOf(env) ? config(env).get<number>('lineLength', 100) : undefined,
 			});
 			return md;
 		},

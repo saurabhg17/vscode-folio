@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import markdownit, { type MarkdownIt } from 'markdown-it';
 import { taskListPlugin, type TaskMeta } from '../src/markdown/taskLists.ts';
 import { mermaidPlugin } from '../src/markdown/mermaid.ts';
+import { lineLengthPlugin, measureFor } from '../src/markdown/lineLength.ts';
 import { toggleTaskLine } from '../src/tasks/toggle.ts';
 
 /** Untyped CommonJS; the task-list plugin Markdown All in One bundles. */
@@ -89,3 +90,22 @@ for (const enabled of [true, false]) {
 		assert.match(html, /<li>plain<\/li>/);
 	});
 }
+
+test('converts a line length in characters to a column width', () => {
+	assert.equal(measureFor(100), '50em');
+	assert.equal(measureFor(85), '42.5em');
+	assert.equal(measureFor(5), '10em');
+	assert.equal(measureFor(0), 'none');
+	assert.equal(measureFor(Number.NaN), 'none');
+});
+
+test('prefixes the render with the column width, or leaves it alone', () => {
+	const md = engine();
+	let chars: number | undefined = 100;
+	lineLengthPlugin(md, { lineLength: () => chars });
+	assert.equal(md.render('text\n'), '<style>body { --md-measure: 50em; }</style>\n<p>text</p>\n');
+	chars = 0;
+	assert.match(md.render('text\n'), /^<style>body \{ --md-measure: none; \}<\/style>\n/);
+	chars = undefined;
+	assert.equal(md.render('text\n'), '<p>text</p>\n');
+});

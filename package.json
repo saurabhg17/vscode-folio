@@ -52,6 +52,13 @@
 					"default": true,
 					"markdownDescription": "Save the file after a checkbox is toggled from the preview. A file that already had unsaved changes is never saved automatically."
 				},
+				"folio.lineLength": {
+					"type": "integer",
+					"default": 100,
+					"minimum": 0,
+					"maximum": 300,
+					"markdownDescription": "Approximate number of characters per line in the preview's text column. `0` lets the text fill the preview."
+				},
 				"folio.mermaid.enabled": {
 					"type": "boolean",
 					"default": true,

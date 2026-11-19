@@ -8,7 +8,7 @@
  */
 
 :root {
-    --md-measure: 36em;    /* max line length of the text column, about 75 characters */
+    --md-measure: 50em;    /* text column width, about 100 characters; folio.lineLength overrides it */
     --md-size: 17px;       /* body text size */
     --md-leading: 1.55;    /* body line height */
     --md-ink: #1f2328;     /* text colour, also the colour of table rules */
