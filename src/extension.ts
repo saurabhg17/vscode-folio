@@ -4,6 +4,7 @@ import { lineLengthPlugin } from './markdown/lineLength.ts';
 import { mermaidPlugin } from './markdown/mermaid.ts';
 import { headerlessTablesPlugin } from './markdown/tables.ts';
 import { taskListPlugin } from './markdown/taskLists.ts';
+import { tocPlugin } from './markdown/toc.ts';
 import { TaskToggleUriHandler, toggleHref } from './tasks/handler.ts';
 
 /** Extensions whose markdown-it plugins fight with Folio's over the same syntax. */
@@ -61,6 +62,11 @@ export function activate(context: vscode.ExtensionContext) {
 			lineLengthPlugin(md, {
 				// Only previews of a document; other callers of the engine get plain HTML.
 				lineLength: (env) => documentOf(env) ? config(env).get<number>('lineLength', 85) : undefined,
+			});
+			tocPlugin(md, {
+				levels: (env) => documentOf(env) && config(env).get<boolean>('toc.enabled', true)
+					? config(env).get<number>('toc.levels', 2)
+					: undefined,
 			});
 			return md;
 		},

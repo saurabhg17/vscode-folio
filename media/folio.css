@@ -12,7 +12,9 @@
     --md-size: 17px;       /* body text size */
     --md-leading: 1.55;    /* body line height */
     --md-ink: #1f2328;     /* text colour, also the colour of table rules */
-    --md-rule-light: rgba(31, 35, 40, 0.3);  /* hairlines: code blocks, horizontal rules */
+    --md-rule-light: rgba(31, 35, 40, 0.3);  /* hairlines: code blocks, horizontal rules, contents panel */
+    --md-serif: "Folio Serif", Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
+    --md-toc-width: 240px; /* contents panel width */
 }
 
 /* ---------------------------------------------------------------------------
@@ -50,7 +52,7 @@ body {
 body .github-markdown-body,
 body .markdown-body {
     /* The optical-size axis gives headings the display cut and body text the text cut. */
-    font-family: "Folio Serif", Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
+    font-family: var(--md-serif);
     font-optical-sizing: auto;
     font-kerning: normal;
     font-variant-ligatures: common-ligatures contextual;
@@ -248,4 +250,102 @@ body .folio-mermaid-error-message {
     font-size: 0.9em;
     margin-bottom: 0.5em;
     white-space: pre-wrap;
+}
+
+/* ---------------------------------------------------------------------------
+ * Contents panel: fixed on the left like a book's contents page, the main sections set bold and
+ * the levels below indented under them. The text column moves right to make room; in a narrow
+ * pane the panel lies over the text instead.
+ * ------------------------------------------------------------------------- */
+
+body .folio-toc {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 10;
+    box-sizing: border-box;
+    width: var(--md-toc-width);
+    padding: 32px 1.2em 2em 1.4em;
+    overflow-y: auto;
+    background-color: #ffffff;
+    border-right: 1px solid var(--md-rule-light);
+    font-family: var(--md-serif);
+    font-optical-sizing: auto;
+    font-size: calc(var(--md-size) * 0.82);
+    font-variant-numeric: lining-nums proportional-nums;
+    line-height: 1.35;
+    color: var(--md-ink);
+}
+
+body .folio-toc-toggle {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    display: flex;
+    width: 24px;
+    height: 24px;
+    padding: 3px;
+    border: 0;
+    border-radius: 3px;
+    background: none;
+    color: var(--md-ink);
+    opacity: 0.55;
+    cursor: pointer;
+}
+body .folio-toc-toggle:hover { opacity: 1; }
+body .folio-toc-toggle:focus-visible {
+    opacity: 1;
+    outline: 2px solid #1f6feb;
+    outline-offset: 1px;
+}
+body .folio-toc-toggle svg {
+    width: 100%;
+    height: 100%;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+}
+
+body .folio-toc-title {
+    font-weight: 600;
+    font-size: 1.15em;
+    margin-bottom: 0.8em;
+}
+body .folio-toc ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+body .folio-toc li { margin: 0 0 0.35em; }
+body .folio-toc li.folio-toc-depth-0 { margin-top: 0.7em; font-weight: 600; }
+body .folio-toc li.folio-toc-depth-0:first-child { margin-top: 0; }
+body .folio-toc li.folio-toc-depth-1 { padding-left: 1.2em; }
+body .folio-toc li.folio-toc-depth-2 { padding-left: 2.4em; }
+body .folio-toc li.folio-toc-depth-3 { padding-left: 3.6em; }
+body .folio-toc li.folio-toc-depth-4 { padding-left: 4.8em; }
+body .folio-toc li.folio-toc-depth-5 { padding-left: 6em; }
+body .folio-toc a {
+    color: inherit;
+    text-decoration: none;
+}
+body .folio-toc a:hover { text-decoration: underline; }
+
+/* Collapsed: only the button, in the corner of the page gutter. */
+body:not(.folio-toc-open) .folio-toc {
+    bottom: auto;
+    width: auto;
+    padding: 0;
+    overflow: visible;
+    background: none;
+    border: 0;
+}
+body:not(.folio-toc-open) .folio-toc nav { display: none; }
+
+body.folio-toc-open > .markdown-body {
+    margin-left: var(--md-toc-width);
+}
+/* Matches NARROW_PX in src/preview/toc.ts. */
+@media (max-width: 640px) {
+    body.folio-toc-open > .markdown-body { margin-left: 0; }
 }

@@ -2,9 +2,11 @@
  * Runs inside VS Code's Markdown preview webview.
  *
  * Renders the `.folio-mermaid` placeholders emitted by the markdown-it plugin, the way Markdown
- * Preview Enhanced does: a plain SVG at its natural size, no viewport box around it.
+ * Preview Enhanced does: a plain SVG at its natural size, no viewport box around it. Also keeps the
+ * table of contents panel in step with the document.
  */
 import mermaid from 'mermaid';
+import { updateToc } from './toc.ts';
 
 type Theme = NonNullable<Parameters<typeof mermaid.initialize>[0]['theme']>;
 
@@ -89,9 +91,14 @@ function renderAll(): void {
 	}
 }
 
-window.addEventListener('vscode.markdown.updateContent', renderAll);
-if (document.readyState === 'loading') {
-	document.addEventListener('DOMContentLoaded', renderAll);
-} else {
+function update(): void {
+	updateToc();
 	renderAll();
+}
+
+window.addEventListener('vscode.markdown.updateContent', update);
+if (document.readyState === 'loading') {
+	document.addEventListener('DOMContentLoaded', update);
+} else {
+	update();
 }

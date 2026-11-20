@@ -5,6 +5,7 @@ Folio improves VS Code's built-in Markdown preview (open with `Ctrl+Shift+V`, or
 ## Features
 
 - **Typography.** A bundled serif text face (Source Serif 4, so every platform renders the same), a book-length text column, headings on a LaTeX-like scale, code marked by your editor font alone with no tinted background, and booktabs-style tables: heavy rules top and bottom, a light rule under the header, no grid. A table written with an empty header row (`| | |` above `|---|---|`) is shown without a header. It sits on top of [Markdown Preview GitHub Styling](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-preview-github-styles), which is installed with it and supplies the colours.
+- **Table of contents.** A panel on the left of the preview lists the document's headings, `#` and `##` by default; clicking one scrolls to it. The button at the panel's top collapses it to a small icon and opens it again. In a narrow preview it starts collapsed and opens over the text.
 - **Clickable task lists.** `- [ ]` and `- [x]` items render as checkboxes. Clicking one checks or unchecks the task in the source file and saves it.
 - **Mermaid diagrams.** ` ```mermaid ` blocks render as diagrams at their natural size on the white page, with Mermaid 12. A broken diagram shows Mermaid's error and its source in place of the diagram.
 
@@ -25,6 +26,8 @@ Each link carries a random key that Folio generates when it starts, so a `vscode
 | Setting | Default | Effect |
 | --- | --- | --- |
 | `folio.lineLength` | `85` | Approximate characters per line in the text column. `0` lets the text fill the preview. |
+| `folio.toc.enabled` | `true` | Show the table of contents panel. |
+| `folio.toc.levels` | `2` | Deepest heading level listed, from `1` to `6`: `2` lists `#` and `##` headings. |
 | `folio.tasks.clickable` | `true` | Make checkboxes clickable. When off they render read-only. |
 | `folio.tasks.saveAfterToggle` | `true` | Save after a toggle. A file that already had unsaved changes is never saved automatically. |
 | `folio.mermaid.enabled` | `true` | Render Mermaid blocks. |

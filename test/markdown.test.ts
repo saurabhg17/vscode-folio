@@ -6,6 +6,8 @@ import { taskListPlugin, type TaskMeta } from '../src/markdown/taskLists.ts';
 import { mermaidPlugin } from '../src/markdown/mermaid.ts';
 import { lineLengthPlugin, measureFor } from '../src/markdown/lineLength.ts';
 import { headerlessTablesPlugin } from '../src/markdown/tables.ts';
+import { clampLevels, tocPlugin } from '../src/markdown/toc.ts';
+import { outline } from '../src/preview/toc.ts';
 import { toggleTaskLine } from '../src/tasks/toggle.ts';
 
 /** Untyped CommonJS; the task-list plugin Markdown All in One bundles. */
@@ -129,4 +131,39 @@ test('keeps a header row with any text in it, and the header of a table with no 
 	const two = md.render('| |\n|-|\n|a|\n\n| h |\n|-|\n|b|\n');
 	assert.equal(two.match(/<thead>/g)?.length, 1);
 	assert.match(two, /<th>h<\/th>/);
+});
+
+test('passes the contents depth to the preview, or nothing when the panel is off', () => {
+	const md = markdownit();
+	let levels: number | undefined = 3;
+	tocPlugin(md, { levels: () => levels });
+	assert.equal(md.render('# A\n'), '<div class="folio-toc-config" data-levels="3" hidden></div>\n<h1>A</h1>\n');
+	levels = 9;
+	assert.match(md.render('# A\n'), /data-levels="6"/);
+	levels = undefined;
+	assert.equal(md.render('# A\n'), '<h1>A</h1>\n');
+});
+
+test('clamps the contents depth to a heading level', () => {
+	assert.equal(clampLevels(0), 1);
+	assert.equal(clampLevels(2.7), 2);
+	assert.equal(clampLevels(7), 6);
+	assert.equal(clampLevels(Number.NaN), undefined);
+});
+
+test('outlines headings down to the configured level, indented from the shallowest listed', () => {
+	const headings = [
+		{ level: 2, text: 'Intro', id: 'intro' },
+		{ level: 3, text: 'Detail', id: 'detail' },
+		{ level: 4, text: 'Too deep', id: 'too-deep' },
+		{ level: 3, text: '  ', id: '' },
+		{ level: 2, text: ' Usage ', id: 'usage' },
+	];
+	assert.deepEqual(outline(headings, 3).map((e) => [e.index, e.depth, e.text]), [
+		[0, 0, 'Intro'],
+		[1, 1, 'Detail'],
+		[4, 0, 'Usage'],
+	]);
+	assert.deepEqual(outline(headings, 1), []);
+	assert.deepEqual(outline([{ level: 1, text: 'Title', id: 't' }, ...headings], 2).map((e) => e.depth), [0, 1, 1]);
 });

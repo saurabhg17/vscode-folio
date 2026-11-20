@@ -1,7 +1,7 @@
 {
 	"name": "folio",
 	"displayName": "Folio — Markdown Preview",
-	"description": "Typography, clickable task lists and Mermaid diagrams for VS Code's built-in Markdown preview.",
+	"description": "Typography, a table of contents, clickable task lists and Mermaid diagrams for VS Code's built-in Markdown preview.",
 	"version": "2.0.0",
 	"publisher": "saurabh",
 	"license": "MIT",
@@ -15,6 +15,8 @@
 		"markdown",
 		"preview",
 		"mermaid",
+		"table of contents",
+		"toc",
 		"task list",
 		"checkbox"
 	],
@@ -58,6 +60,18 @@
 					"minimum": 0,
 					"maximum": 300,
 					"markdownDescription": "Approximate number of characters per line in the preview's text column. `0` lets the text fill the preview."
+				},
+				"folio.toc.enabled": {
+					"type": "boolean",
+					"default": true,
+					"markdownDescription": "Show a table of contents panel on the left of the preview. The button at its top collapses and reopens it."
+				},
+				"folio.toc.levels": {
+					"type": "integer",
+					"default": 2,
+					"minimum": 1,
+					"maximum": 6,
+					"markdownDescription": "Deepest heading level the table of contents lists: `2` lists `#` and `##` headings."
 				},
 				"folio.mermaid.enabled": {
 					"type": "boolean",
