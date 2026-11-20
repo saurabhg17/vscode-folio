@@ -5,6 +5,7 @@ import markdownit, { type MarkdownIt } from 'markdown-it';
 import { taskListPlugin, type TaskMeta } from '../src/markdown/taskLists.ts';
 import { mermaidPlugin } from '../src/markdown/mermaid.ts';
 import { lineLengthPlugin, measureFor } from '../src/markdown/lineLength.ts';
+import { headerlessTablesPlugin } from '../src/markdown/tables.ts';
 import { toggleTaskLine } from '../src/tasks/toggle.ts';
 
 /** Untyped CommonJS; the task-list plugin Markdown All in One bundles. */
@@ -108,4 +109,24 @@ test('prefixes the render with the column width, or leaves it alone', () => {
 	assert.match(md.render('text\n'), /^<style>body \{ --md-measure: none; \}<\/style>\n/);
 	chars = undefined;
 	assert.equal(md.render('text\n'), '<p>text</p>\n');
+});
+
+test('drops the header row of a table whose header cells are all empty', () => {
+	const md = markdownit();
+	headerlessTablesPlugin(md);
+	for (const src of ['|  |  |\n|---|---|\n| a | b |\n', '|||\n|:-|-:|\n|a|b|\n']) {
+		const html = md.render(src);
+		assert.doesNotMatch(html, /<thead>|<th[ >]/, src);
+		assert.match(html, /^<table>\n<tbody>\n<tr>\n<td[^>]*>a<\/td>\n<td[^>]*>b<\/td>/, src);
+	}
+});
+
+test('keeps a header row with any text in it, and the header of a table with no body', () => {
+	const md = markdownit();
+	headerlessTablesPlugin(md);
+	assert.match(md.render('| | x |\n|-|-|\n|a|b|\n'), /<thead>\n<tr>\n<th><\/th>\n<th>x<\/th>/);
+	assert.match(md.render('| |\n|-|\n'), /<thead>/);
+	const two = md.render('| |\n|-|\n|a|\n\n| h |\n|-|\n|b|\n');
+	assert.equal(two.match(/<thead>/g)?.length, 1);
+	assert.match(two, /<th>h<\/th>/);
 });

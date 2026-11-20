@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import type { MarkdownIt } from 'markdown-it';
 import { lineLengthPlugin } from './markdown/lineLength.ts';
 import { mermaidPlugin } from './markdown/mermaid.ts';
+import { headerlessTablesPlugin } from './markdown/tables.ts';
 import { taskListPlugin } from './markdown/taskLists.ts';
 import { TaskToggleUriHandler, toggleHref } from './tasks/handler.ts';
 
@@ -56,6 +57,7 @@ export function activate(context: vscode.ExtensionContext) {
 				enabled: (env) => config(env).get<boolean>('mermaid.enabled', true),
 				theme: (env) => config(env).get<string>('mermaid.theme', 'default'),
 			});
+			headerlessTablesPlugin(md);
 			lineLengthPlugin(md, {
 				// Only previews of a document; other callers of the engine get plain HTML.
 				lineLength: (env) => documentOf(env) ? config(env).get<number>('lineLength', 85) : undefined,

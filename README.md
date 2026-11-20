@@ -4,7 +4,7 @@ Folio improves VS Code's built-in Markdown preview (open with `Ctrl+Shift+V`, or
 
 ## Features
 
-- **Typography.** A bundled serif text face (Source Serif 4, so every platform renders the same), a book-length text column, headings on a LaTeX-like scale, code marked by your editor font alone with no tinted background, and booktabs-style tables: heavy rules top and bottom, a light rule under the header, no grid. It sits on top of [Markdown Preview GitHub Styling](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-preview-github-styles), which is installed with it and supplies the colours.
+- **Typography.** A bundled serif text face (Source Serif 4, so every platform renders the same), a book-length text column, headings on a LaTeX-like scale, code marked by your editor font alone with no tinted background, and booktabs-style tables: heavy rules top and bottom, a light rule under the header, no grid. A table written with an empty header row (`| | |` above `|---|---|`) is shown without a header. It sits on top of [Markdown Preview GitHub Styling](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-preview-github-styles), which is installed with it and supplies the colours.
 - **Clickable task lists.** `- [ ]` and `- [x]` items render as checkboxes. Clicking one checks or unchecks the task in the source file and saves it.
 - **Mermaid diagrams.** ` ```mermaid ` blocks render as diagrams at their natural size on the white page, with Mermaid 12. A broken diagram shows Mermaid's error and its source in place of the diagram.
 
