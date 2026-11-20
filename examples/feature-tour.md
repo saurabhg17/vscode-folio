@@ -10,6 +10,8 @@ purpose: The front matter shifts every line below it, so clicking a task here al
 
 Open this file and press `Ctrl+Shift+V`. Each section says what you should see. After clicking through the tasks, run `git checkout examples/feature-tour.md` to reset it.
 
+**Contents panel.** A panel on the left lists the `#`, `##` and `###` headings of this file, so the Mermaid diagram names appear under section 4. Clicking an entry scrolls to that heading; the button at the panel's top collapses it and opens it again, and it stays as you left it while you edit. Drag the panel's right edge to resize it; double-click the edge to reset it. Set `folio.toc.levels` to `2` and the diagram names disappear.
+
 ## 1. Clickable tasks
 
 The first click on any checkbox asks *"Allow 'Folio — Markdown Preview' extension to open this URI?"*. Tick **Do not ask me again for this extension** and choose **Open**.
