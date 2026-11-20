@@ -64,14 +64,14 @@
 				"folio.toc.enabled": {
 					"type": "boolean",
 					"default": true,
-					"markdownDescription": "Show a table of contents panel on the left of the preview. The button at its top collapses and reopens it."
+					"markdownDescription": "Show a table of contents panel on the left of the preview. The button at its top collapses and reopens it; its right edge can be dragged to resize it."
 				},
 				"folio.toc.levels": {
 					"type": "integer",
-					"default": 2,
+					"default": 3,
 					"minimum": 1,
 					"maximum": 6,
-					"markdownDescription": "Deepest heading level the table of contents lists: `2` lists `#` and `##` headings."
+					"markdownDescription": "Deepest heading level the table of contents lists: `3` lists `#`, `##` and `###` headings."
 				},
 				"folio.mermaid.enabled": {
 					"type": "boolean",

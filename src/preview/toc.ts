@@ -4,6 +4,7 @@
  * VS Code replaces only the `.markdown-body` element when the document changes, so the panel lives
  * directly in `<body>`: it survives each update, keeps its own scroll position and stays
  * collapsed or open as the reader left it. Every update rebuilds the list from the headings.
+ * Its right edge can be dragged to resize it.
  */
 
 export interface Heading {
@@ -34,6 +35,13 @@ const HEADING_SELECTOR = '.markdown-body :is(h1, h2, h3, h4, h5, h6)';
 const OPEN_CLASS = 'folio-toc-open';
 /** Below this pane width the panel would squeeze the text, so it starts collapsed and overlays. */
 const NARROW_PX = 640;
+const RESIZING_CLASS = 'folio-toc-resizing';
+/** The panel's width lives in this custom property; folio.css holds its default. */
+const WIDTH_PROPERTY = '--md-toc-width';
+const MIN_WIDTH_PX = 140;
+/** As a fraction of the pane, so the text always keeps most of it. */
+const MAX_WIDTH_FRACTION = 0.6;
+const KEY_STEP_PX = 16;
 
 let panel: HTMLElement | undefined;
 let list: HTMLOListElement | undefined;
@@ -69,14 +77,11 @@ function createPanel(): HTMLElement {
 	const nav = document.createElement('nav');
 	nav.id = 'folio-toc-nav';
 	nav.setAttribute('aria-label', 'Contents');
-	const title = document.createElement('div');
-	title.className = 'folio-toc-title';
-	title.textContent = 'Contents';
 	list = document.createElement('ol');
 	list.addEventListener('click', onEntryClick);
-	nav.append(title, list);
+	nav.append(list);
 
-	aside.append(toggle, nav);
+	aside.append(toggle, nav, createResizer(aside));
 	document.body.append(aside);
 	setOpen(open ?? window.innerWidth >= NARROW_PX);
 	return aside;
@@ -97,6 +102,67 @@ function listIcon(): SVGSVGElement {
 		svg.append(line);
 	}
 	return svg;
+}
+
+function setWidth(px: number): void {
+	const max = Math.max(MIN_WIDTH_PX, window.innerWidth * MAX_WIDTH_FRACTION);
+	const width = Math.round(Math.min(max, Math.max(MIN_WIDTH_PX, px)));
+	// On <html>, so the width outlives the panel when a document without headings removes it.
+	document.documentElement.style.setProperty(WIDTH_PROPERTY, `${width}px`);
+}
+
+/** A handle on the panel's right edge: drag it, or focus it and use the arrow keys. Double-click resets. */
+function createResizer(aside: HTMLElement): HTMLElement {
+	const handle = document.createElement('div');
+	handle.className = 'folio-toc-resizer';
+	handle.tabIndex = 0;
+	handle.title = 'Drag to resize, double-click to reset';
+	handle.setAttribute('role', 'separator');
+	handle.setAttribute('aria-orientation', 'vertical');
+	handle.setAttribute('aria-controls', 'folio-toc-nav');
+	handle.setAttribute('aria-label', 'Resize contents');
+
+	// Capture sends the drag's moves to the handle even when the pointer runs ahead of it.
+	let dragging: number | undefined;
+	handle.addEventListener('pointerdown', (event) => {
+		if (event.button !== 0) {
+			return;
+		}
+		event.preventDefault();
+		dragging = event.pointerId;
+		try {
+			handle.setPointerCapture(event.pointerId);
+		} catch {
+			// Not a live pointer (a synthetic event); moves over the handle still resize.
+		}
+		document.body.classList.add(RESIZING_CLASS);
+	});
+	handle.addEventListener('pointermove', (event) => {
+		if (event.pointerId === dragging) {
+			setWidth(event.clientX);
+		}
+	});
+	const stop = (event: PointerEvent) => {
+		if (event.pointerId !== dragging) {
+			return;
+		}
+		dragging = undefined;
+		if (handle.hasPointerCapture(event.pointerId)) {
+			handle.releasePointerCapture(event.pointerId);
+		}
+		document.body.classList.remove(RESIZING_CLASS);
+	};
+	handle.addEventListener('pointerup', stop);
+	handle.addEventListener('pointercancel', stop);
+	handle.addEventListener('dblclick', () => document.documentElement.style.removeProperty(WIDTH_PROPERTY));
+	handle.addEventListener('keydown', (event) => {
+		const step = event.key === 'ArrowLeft' ? -KEY_STEP_PX : event.key === 'ArrowRight' ? KEY_STEP_PX : 0;
+		if (step !== 0) {
+			event.preventDefault();
+			setWidth(aside.getBoundingClientRect().width + step);
+		}
+	});
+	return handle;
 }
 
 function onEntryClick(event: MouseEvent): void {

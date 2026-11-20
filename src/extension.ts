@@ -65,7 +65,7 @@ export function activate(context: vscode.ExtensionContext) {
 			});
 			tocPlugin(md, {
 				levels: (env) => documentOf(env) && config(env).get<boolean>('toc.enabled', true)
-					? config(env).get<number>('toc.levels', 2)
+					? config(env).get<number>('toc.levels', 3)
 					: undefined,
 			});
 			return md;

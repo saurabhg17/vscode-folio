@@ -307,11 +307,6 @@ body .folio-toc-toggle svg {
     stroke-linecap: round;
 }
 
-body .folio-toc-title {
-    font-weight: 600;
-    font-size: 1.15em;
-    margin-bottom: 0.8em;
-}
 body .folio-toc ol {
     list-style: none;
     margin: 0;
@@ -331,6 +326,28 @@ body .folio-toc a {
 }
 body .folio-toc a:hover { text-decoration: underline; }
 
+/* The panel's right edge, a few pixels wide; the hairline darkens while it is hovered or dragged. */
+body .folio-toc-resizer {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: calc(var(--md-toc-width) - 3px);
+    width: 6px;
+    cursor: col-resize;
+    touch-action: none;
+}
+body .folio-toc-resizer:hover,
+body .folio-toc-resizer:focus-visible,
+body.folio-toc-resizing .folio-toc-resizer {
+    outline: none;
+    background: linear-gradient(to right, transparent 2px, var(--md-ink) 2px, var(--md-ink) 4px, transparent 4px);
+    opacity: 0.35;
+}
+body.folio-toc-resizing {
+    cursor: col-resize;
+    user-select: none;
+}
+
 /* Collapsed: only the button, in the corner of the page gutter. */
 body:not(.folio-toc-open) .folio-toc {
     bottom: auto;
@@ -340,7 +357,7 @@ body:not(.folio-toc-open) .folio-toc {
     background: none;
     border: 0;
 }
-body:not(.folio-toc-open) .folio-toc nav { display: none; }
+body:not(.folio-toc-open) .folio-toc :is(nav, .folio-toc-resizer) { display: none; }
 
 body.folio-toc-open > .markdown-body {
     margin-left: var(--md-toc-width);
