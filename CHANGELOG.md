@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.1.0
 
 - Table of contents panel on the left of the preview, collapsible and resizable, listing headings down to `folio.toc.levels` (default 3). `folio.toc.enabled` turns it off.
 - A table whose header row is empty renders without a header, so no rule is drawn under an empty first row.

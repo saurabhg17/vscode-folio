@@ -2,7 +2,7 @@
 	"name": "folio",
 	"displayName": "Folio — Markdown Preview",
 	"description": "Typography, a table of contents, clickable task lists and Mermaid diagrams for VS Code's built-in Markdown preview.",
-	"version": "2.0.0",
+	"version": "2.1.0",
 	"publisher": "saurabh",
 	"license": "MIT",
 	"engines": {

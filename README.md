@@ -45,7 +45,7 @@ Disable these if installed; Folio warns once on start-up when it finds them:
 ## Install
 
 ```sh
-code --install-extension folio-2.0.0.vsix
+code --install-extension folio-2.1.0.vsix
 ```
 
 On a Remote-SSH or WSL window, install it from the Extensions view (**…** → **Install from VSIX…**) so it lands on the remote side, where the Markdown preview runs.
