@@ -222,6 +222,13 @@ if (fps >= 240 && fps != 0) { log("ok"); }
 | 7-iron |       120.1 |       7097 |      172.5 |
 | Wedge  |        98.6 |       9304 |      111.1 |
 
+A table written with an empty header row has no header: only the heavy rules above and below its rows, no light rule under an empty first row.
+
+|       |                                    |
+| ----- | ---------------------------------- |
+| Carry | Distance the ball flies in the air |
+| Total | Carry plus roll                    |
+
 ### A third-level heading
 
 Followed by a short paragraph.

@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- A table whose header row is empty renders without a header, so no rule is drawn under an empty first row.
+
 ## 2.0.0
 
 - Renamed from Markdown Preview Typography to Folio.
